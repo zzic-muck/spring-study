@@ -1,21 +1,43 @@
 package com.jungle.springpost.controller;
 
-import com.jungle.springpost.entity.Member;
+
+
+import com.jungle.springpost.dto.LoginRequestDto;
+import com.jungle.springpost.dto.SignupRequestDto;
 import com.jungle.springpost.service.MemberService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/user")
 public class MemberController {
-
 
     private final MemberService memberService;
 
-    @PostMapping("/api/register")
-    public Member registerMember(@RequestBody Member member){
-        return memberService.registerMember(member);
+    @GetMapping("/signup")
+    public ModelAndView signupPage() {
+        return new ModelAndView("signup");
     }
+
+    @GetMapping("/login")
+    public ModelAndView loginPage() {
+        return new ModelAndView("login");
+    }
+
+    @PostMapping("/signup")
+    public String signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
+        memberService.signup(signupRequestDto);
+        return "sign up!";
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody LoginRequestDto loginRequestDto) {
+        memberService.login(loginRequestDto);
+        return "login!";
+    }
+
 }
