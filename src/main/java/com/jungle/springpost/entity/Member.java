@@ -4,7 +4,6 @@ package com.jungle.springpost.entity;
 import com.jungle.springpost.dto.PostRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import jakarta.persistence.*;
 
 @Getter
@@ -27,11 +26,16 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRoleEnum role;
 
-    public Member(String username, String password, String email) {
+
+    public Member(String username, String password, String email, UserRoleEnum role) {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.role = role;
 
     }
 }

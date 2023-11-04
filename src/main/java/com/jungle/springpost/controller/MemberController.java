@@ -5,6 +5,7 @@ package com.jungle.springpost.controller;
 import com.jungle.springpost.dto.LoginRequestDto;
 import com.jungle.springpost.dto.SignupRequestDto;
 import com.jungle.springpost.service.MemberService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -33,10 +34,10 @@ public class MemberController {
         memberService.signup(signupRequestDto);
         return "sign up!";
     }
-
+    @ResponseBody
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequestDto loginRequestDto) {
-        memberService.login(loginRequestDto);
+    public String login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+        memberService.login(loginRequestDto, response);
         return "login!";
     }
 
