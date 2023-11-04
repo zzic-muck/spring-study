@@ -9,6 +9,7 @@ import com.jungle.springpost.jwt.JwtUtil;
 import com.jungle.springpost.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,12 +20,14 @@ import java.util.Optional;
 public class MemberService {
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
     // ADMIN_TOKEN
     private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
     @Transactional
     public void signup(SignupRequestDto signupRequestDto) {
         String username = signupRequestDto.getUsername();
         String password = signupRequestDto.getPassword();
+        password = passwordEncoder.encode(password);
         String email = signupRequestDto.getEmail();
 
         // 회원 중복 확인
@@ -59,7 +62,12 @@ public class MemberService {
         );
 
         // 비밀번호 확인
-        if(!member.getPassword().equals(password)){
+        //        if(!member.getPassword().equals(password)){
+        //            throw  new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        //        }
+
+        //암호화된 비밀번호 확인
+        if(!passwordEncoder.matches(password, member.getPassword())){
             throw  new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
