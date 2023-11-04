@@ -4,8 +4,11 @@ import com.jungle.springpost.dto.PostRequestDto;
 import com.jungle.springpost.dto.PostSimpleDto;
 import com.jungle.springpost.dto.PostSummary;
 import com.jungle.springpost.entity.Post;
+import com.jungle.springpost.jwt.JwtUtil;
+import com.jungle.springpost.repository.MemberRepository;
 import com.jungle.springpost.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +20,22 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
+    private final JwtUtil jwtUtil;
 
     @Transactional
-    public Post createPost(PostRequestDto requestDto){
-        Post post = new Post(requestDto);
-        postRepository.save(post);
-        return post;
+    public Post createPost(PostRequestDto requestDto, HttpServletRequest request){
+        String token = jwtUtil.resolveToken(request);
+
+        if(jwtUtil.validateToken(token)){ //유효한 토큰일 경우에만 게시글 작성가능
+            requestDto.setUsername(jwtUtil.getUserInfoFromToken(token).getSubject());
+            Post post = new Post(requestDto);
+            postRepository.save(post);
+            return post;
+        }
+//        Post post = new Post(requestDto);
+//        postRepository.save(post);
+        return null;
     }
 
     @Transactional(readOnly = true)
@@ -46,18 +59,35 @@ public class PostService {
     }
 
     @Transactional
-    public Long update(Long id, PostRequestDto requestDto){
+    public Long update(Long id, PostRequestDto requestDto, HttpServletRequest request){
         Post post = postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("아이디가 없어요.")
-        );
-        post.update(requestDto);
-        return post.getId();
+                () -> new IllegalArgumentException("없는 게시글 입니다."));
+
+        String token = jwtUtil.resolveToken(request);
+        if(jwtUtil.validateToken(token)){ //토큰 유효성 검사
+            if(post.getWriter().equals(jwtUtil.getUserInfoFromToken(token).getSubject())) { // 해당 사용자 인지
+                post.update(requestDto);
+                return post.getId();
+            }
+        }
+
+        return 0L;
     }
 
     @Transactional
-    public Long deletePost(Long id){
-        postRepository.deleteById(id);
-        return id;
+    public Long deletePost(Long id, HttpServletRequest request){
+        Long err = 0L;
+        Post post = postRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("없는 게시글 입니다."));
+
+        String token = jwtUtil.resolveToken(request);
+        if(jwtUtil.validateToken(token)) { //토큰 유효성 검사
+            if (post.getWriter().equals(jwtUtil.getUserInfoFromToken(token).getSubject())) { //해당 사용자 인지
+                postRepository.deleteById(id);
+                return id;
+            }
+        }
+        return err;
     }
 
 }

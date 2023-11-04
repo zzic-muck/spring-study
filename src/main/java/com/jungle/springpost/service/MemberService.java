@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Optional;
 
@@ -73,4 +74,13 @@ public class MemberService {
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getUsername(),member.getRole()));
     }
+    //댓글 기능
+//    @Transactional
+//    public String comment(@RequestBody){
+//
+//
+//        return comment;
+//    }
+
 }
+

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Post extends Timestamped{
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -22,14 +22,14 @@ public class Post extends Timestamped{
     @Column(nullable = false)
     private String contents;
 
-    @Column(nullable = false)
-    private String password;
+//    @Column(nullable = false)
+//    private String password;
 
     public Post(PostRequestDto requestDto){
         this.writer = requestDto.getUsername();
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
-        this.password = requestDto.getPassword();
+//        this.password = requestDto.getPassword();
     }
 
     public void update(PostRequestDto postRequestDto) {
