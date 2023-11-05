@@ -64,13 +64,22 @@ public class PostService {
                 () -> new IllegalArgumentException("없는 게시글 입니다."));
 
         String token = jwtUtil.resolveToken(request);
-        if(jwtUtil.validateToken(token)){ //토큰 유효성 검사
-            if(post.getWriter().equals(jwtUtil.getUserInfoFromToken(token).getSubject())) { // 해당 사용자 인지
+
+        if(jwtUtil.validateToken(token)) { //토큰 유효성 검사
+            if(jwtUtil.getUserInfoFromToken(token).get("auth").equals("USER")) {
+                if (post.getWriter().equals(jwtUtil.getUserInfoFromToken(token).getSubject())) { //해당 사용자 인지
+                    post.update(requestDto);
+                    return post.getId();
+                }
+                else{
+
+                    return 0L;
+                }
+            } else if (jwtUtil.getUserInfoFromToken(token).get("auth").equals("ADMIN")) {
                 post.update(requestDto);
                 return post.getId();
             }
         }
-
         return 0L;
     }
 
@@ -81,8 +90,19 @@ public class PostService {
                 () -> new IllegalArgumentException("없는 게시글 입니다."));
 
         String token = jwtUtil.resolveToken(request);
+        System.out.println(jwtUtil.getUserInfoFromToken(token).get("auth"));
+
         if(jwtUtil.validateToken(token)) { //토큰 유효성 검사
-            if (post.getWriter().equals(jwtUtil.getUserInfoFromToken(token).getSubject())) { //해당 사용자 인지
+            if(jwtUtil.getUserInfoFromToken(token).get("auth").equals("USER")) {
+                if (post.getWriter().equals(jwtUtil.getUserInfoFromToken(token).getSubject())) { //해당 사용자 인지
+                    postRepository.deleteById(id);
+                    return id;
+                }
+                else{
+
+                    return 0L;
+                }
+            } else if (jwtUtil.getUserInfoFromToken(token).get("auth").equals("ADMIN")) {
                 postRepository.deleteById(id);
                 return id;
             }

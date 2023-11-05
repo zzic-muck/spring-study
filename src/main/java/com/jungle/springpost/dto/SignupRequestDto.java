@@ -1,5 +1,6 @@
 package com.jungle.springpost.dto;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,6 @@ public class SignupRequestDto {
     private String password;
 
     private String email;
-    private boolean admin;
+    private boolean admin=false;
     private String adminToken;
 }

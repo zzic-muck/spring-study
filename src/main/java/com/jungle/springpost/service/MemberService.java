@@ -39,8 +39,9 @@ public class MemberService {
 
         // 사용자 ROLE 확인
         UserRoleEnum role = UserRoleEnum.USER;
-
+        System.out.println(signupRequestDto.isAdmin());
         if (signupRequestDto.isAdmin()) {
+
             if (!signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)) {
                 throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
             }
