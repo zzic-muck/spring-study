@@ -48,12 +48,12 @@ public class PostService {
         Post p = postRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
 
-        PostSimpleDto postSimpleDto = new PostSimpleDto();
-
-        postSimpleDto.setContents(p.getContents());
-        postSimpleDto.setTitle(p.getTitle());
-        postSimpleDto.setWriter(p.getWriter());
-        postSimpleDto.setCreatedAt(p.getCreatedAt());
+        PostSimpleDto postSimpleDto =  PostSimpleDto.builder()
+                                                    .title(p.getTitle())
+                                                    .contents(p.getContents())
+                                                    .writer(p.getWriter())
+                                                    .createdAt(p.getCreatedAt())
+                                                    .postComments(p.getCommentList()).build();
 
         return postSimpleDto;
     }

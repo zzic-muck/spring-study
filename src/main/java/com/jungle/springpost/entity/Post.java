@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -22,6 +25,9 @@ public class Post extends Timestamped{
     @Column(nullable = false)
     private String contents;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @OrderBy("createdAt desc")
+    List<PostComment> commentList = new ArrayList<>();
 //    @Column(nullable = false)
 //    private String password;
 
@@ -29,8 +35,8 @@ public class Post extends Timestamped{
         this.writer = requestDto.getUsername();
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
-//        this.password = requestDto.getPassword();
     }
+
 
     public void update(PostRequestDto postRequestDto) {
 //        this.writer = postRequestDto.getUsername();
