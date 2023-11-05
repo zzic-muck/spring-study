@@ -40,6 +40,7 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public List<PostSummary> getPosts() {
+        
         return postRepository.findAllByOrderByModifiedAtDesc();
     }
 
