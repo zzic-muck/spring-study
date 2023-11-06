@@ -65,6 +65,38 @@ public class CommentService {
         return err;
     }
 
+    @Transactional
+    public PostComment Commentupdate(Long id, PostCommentDto requestDto, HttpServletRequest request){
+        PostComment comment = commentRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("없는 댓글 입니다."));
+
+        String token = jwtUtil.resolveToken(request);
+
+        if(jwtUtil.validateToken(token)) { //토큰 유효성 검사
+            if(jwtUtil.getUserInfoFromToken(token).get("auth").equals("USER")) {
+                if (comment.getUsername().equals(jwtUtil.getUserInfoFromToken(token).getSubject())) { //해당 사용자 인지
+                    comment.Commentupdate(requestDto);
+                    return comment;
+//                    return comment.getId();
+                }
+                else{
+                    throw new IllegalArgumentException();
+                }
+            } else if (jwtUtil.getUserInfoFromToken(token).get("auth").equals("ADMIN")) {
+                comment.Commentupdate(requestDto);
+                return comment;
+//                return comment.getId();
+            }
+        }
+        throw new IllegalArgumentException();
+    }
+
+
+
+
+
+
+
 
 
 }

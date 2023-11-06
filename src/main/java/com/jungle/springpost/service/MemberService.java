@@ -35,6 +35,7 @@ public class MemberService {
         Optional<Member> found = memberRepository.findByUsername(username);
         if (found.isPresent()) {
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+//            throw new IllegalArgumentException();
         }
 
         // 사용자 ROLE 확인
@@ -47,8 +48,6 @@ public class MemberService {
             }
             role = UserRoleEnum.ADMIN;
         }
-
-
         Member member = new Member(username, password, email, role);
         memberRepository.save(member);
     }
@@ -62,11 +61,6 @@ public class MemberService {
         Member member = memberRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
         );
-
-        // 비밀번호 확인
-        //        if(!member.getPassword().equals(password)){
-        //            throw  new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        //        }
 
         //암호화된 비밀번호 확인
         if(!passwordEncoder.matches(password, member.getPassword())){

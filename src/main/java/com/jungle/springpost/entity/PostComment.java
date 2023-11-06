@@ -28,11 +28,14 @@ public class PostComment extends Timestamped{
     private Post post;
 
     public PostComment(PostCommentDto commentDto, Post post) {
-
         this.username = commentDto.getUsername();
         this.comment = commentDto.getComment();
         this.post = post;
+    }
 
+    public void Commentupdate(PostCommentDto commentDto) {
+
+        this.comment = commentDto.getComment();
     }
 }
 

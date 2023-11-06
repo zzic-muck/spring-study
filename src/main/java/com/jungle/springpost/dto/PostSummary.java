@@ -10,5 +10,5 @@ public interface PostSummary {
     String getWriter();
     String getContents();
     LocalDateTime getCreatedAt();
-    List<PostComment> getcommentList();
+    List<CommentSummary> getcommentList();
 }

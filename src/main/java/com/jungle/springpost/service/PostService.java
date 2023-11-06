@@ -27,15 +27,13 @@ public class PostService {
     public Post createPost(PostRequestDto requestDto, HttpServletRequest request){
         String token = jwtUtil.resolveToken(request);
 
-        if(jwtUtil.validateToken(token)){ //유효한 토큰일 경우에만 게시글 작성가능
-            requestDto.setUsername(jwtUtil.getUserInfoFromToken(token).getSubject());
-            Post post = new Post(requestDto);
-            postRepository.save(post);
-            return post;
+        if(!jwtUtil.validateToken(token)){ //유효한 토큰일 경우에만 게시글 작성가능
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
         }
-//        Post post = new Post(requestDto);
-//        postRepository.save(post);
-        return null;
+        requestDto.setUsername(jwtUtil.getUserInfoFromToken(token).getSubject());
+        Post post = new Post(requestDto);
+        postRepository.save(post);
+        return post;
     }
 
     @Transactional(readOnly = true)
@@ -60,7 +58,7 @@ public class PostService {
     }
 
     @Transactional
-    public Long update(Long id, PostRequestDto requestDto, HttpServletRequest request){
+    public Post update(Long id, PostRequestDto requestDto, HttpServletRequest request){
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("없는 게시글 입니다."));
 
@@ -70,23 +68,25 @@ public class PostService {
             if(jwtUtil.getUserInfoFromToken(token).get("auth").equals("USER")) {
                 if (post.getWriter().equals(jwtUtil.getUserInfoFromToken(token).getSubject())) { //해당 사용자 인지
                     post.update(requestDto);
-                    return post.getId();
+                    return post;
+//                    return post.getId();
                 }
                 else{
-
-                    return 0L;
+                    throw new IllegalArgumentException("수정 권한이 없습니다.");
                 }
             } else if (jwtUtil.getUserInfoFromToken(token).get("auth").equals("ADMIN")) {
                 post.update(requestDto);
-                return post.getId();
+                return post;
+//                return post.getId();
             }
         }
-        return 0L;
+        return null;
+//        return 0L;
     }
 
     @Transactional
     public Long deletePost(Long id, HttpServletRequest request){
-        Long err = 0L;
+
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("없는 게시글 입니다."));
 
@@ -100,15 +100,14 @@ public class PostService {
                     return id;
                 }
                 else{
-
-                    return 0L;
+                    throw new IllegalArgumentException("삭제 권한이 없습니다.");
                 }
             } else if (jwtUtil.getUserInfoFromToken(token).get("auth").equals("ADMIN")) {
                 postRepository.deleteById(id);
                 return id;
             }
         }
-        return err;
+        return -1L;
     }
 
 }
