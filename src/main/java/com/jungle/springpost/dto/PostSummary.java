@@ -6,9 +6,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PostSummary {
-    String getTitle();
-    String getWriter();
-    String getContents();
-    LocalDateTime getCreatedAt();
-    List<CommentSummary> getcommentList();
+	String getTitle();
+
+	String getWriter();
+
+	String getContents();
+
+	LocalDateTime getCreatedAt();
+
+	List<CommentSummary> getcommentList();
 }

@@ -4,9 +4,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
 @Builder
 public class PostCommentDto {
-    private String username;
-    private String comment;
+	private String username;
+	private String comment;
 }

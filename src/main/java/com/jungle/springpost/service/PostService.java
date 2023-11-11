@@ -45,7 +45,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostSimpleDto getPostsById(Long id) {
         Post p = postRepository.findById(id)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new IllegalArgumentException("조회할 수 없는 게시글 입니다."));
 
         PostSimpleDto postSimpleDto =  PostSimpleDto.builder()
                                                     .title(p.getTitle())

@@ -5,9 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Builder
-@Getter @Setter
+@Getter
+@Setter
 public class LoginResponseDto {
 
-    private String message;
-    private int statusCode;
+	private String message;
+	private int statusCode;
 }
